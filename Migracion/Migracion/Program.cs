@@ -138,7 +138,7 @@ class Program
         }
 
 
-        using (FileStream fc = File.OpenRead(dbfFileCiudad))
+        using (FileStream fc = File.OpenRead(dbfFileHistoNove))
         {
             var reader = new DBFReader(fc);
             reader.CharEncoding = System.Text.Encoding.UTF8;
