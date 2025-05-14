@@ -1,0 +1,52 @@
+# Archivos de Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de compilación
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+*.dll
+*.exe
+*.app
+*.log
+
+# Paquetes y dependencias
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# Archivos de publicación
+publish/
+out/
+
+# Archivos temporales del sistema
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+
+# Archivos generados por Rider
+.idea/
+
+# Archivos de configuración de IIS
+*.vspscc
+*.vssscc
+*.scc
+
+# Logs y diagnósticos
+*.log
+*.tlog
+*.svclog
+
+# Configuración local
+launchSettings.json
