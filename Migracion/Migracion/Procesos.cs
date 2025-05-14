@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Migracion
 {
-    public class Procesos
+     class Procesos
     {
 
-        static void InsertarVendedores(List<t_vended> vendedList)
+        public static void InsertarVendedores(List<t_vended> vendedList)
         {
             using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
             {
@@ -57,7 +57,7 @@ namespace Migracion
             Console.WriteLine("Datos insertados correctamente.");
         }
 
-        static void InsertarClientes(List<t_cliente> Clien_list, List<t_ciudad> ciudade_lis)
+        public static void InsertarClientes(List<t_cliente> Clien_list, List<t_ciudad> ciudade_lis)
         {
 
             int xTipoPersona = 0;
