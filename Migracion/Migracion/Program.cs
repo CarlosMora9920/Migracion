@@ -10,23 +10,33 @@ using Npgsql;
 
 class Program
 {
+    // 12-05-2025 Generado por : CarlosM
     static void Main(string[] args)
     {
 
-        string dbfFilePath = @"C:\tmp_archivos\vended.dbf";
-        string dbfFileCliente = @"C:\tmp_archivos\anexosbb.dbf";
-        string dbfFileCiudad = @"C:\tmp_archivos\ciudad.DBF";
-        string dbfFileHistoNove = @"C:\tmp_archivos\histonove.DBF";
+        //Variables que contiene las rutas de las tablas de FoxPro
+        string dbfFilePath       = @"C:\tmp_archivos\vended.dbf";
+        string dbfFileCliente    = @"C:\tmp_archivos\anexosbb.dbf";
+        string dbfFileCiudad     = @"C:\tmp_archivos\ciudad.DBF";
+        string dbfFileHistoNove  = @"C:\tmp_archivos\histonove.DBF";
+        string dbfFileHistonve_P = @"C:\tmp_archivos\histonove_p.dbf";
 
-        var vendedList = new List<t_vended>();
-        var Clien_list = new List<t_cliente>();
+
+        // Son listas que se generar para almacenar todos los datos de las
+        // tablas del FoxPro
+        var vendedList  = new List<t_vended>();
+        var Clien_list  = new List<t_cliente>();
         var ciudade_lis = new List<t_ciudad>();
-        var nove_list = new List<t_histonove>();
+        var nove_list   = new List<t_histonove>();
+        var nove_pen    = new List<t_histonove>();
 
+        //Instanciando la clase proceso
         Procesos pro = new Procesos();
 
+        //Provider
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+        // Solicitando la clase a procesar
         Console.WriteLine("Por favor seleccionar tabla:");
         int xTabla = int.Parse(Console.ReadLine());
 
@@ -160,7 +170,35 @@ class Program
                 Procesos.InsertarHistoNove(nove_list);
 
                 break;
-            case 4:
+            case 4:  // cambioPension
+
+                using (FileStream fc = File.OpenRead(dbfFileHistonve_P))
+                {
+                    var reader = new DBFReader(fc);
+                    reader.CharEncoding = System.Text.Encoding.UTF8;
+
+                    object[] record;
+                    while ((record = reader.NextRecord()) != null)
+                    {
+                        var histonoveP = new t_histonove
+                        {
+                            cod_ant = record[4]?.ToString()?.Trim(),
+                            cod_act = record[5]?.ToString()?.Trim(),
+                            usua_reg = record[9]?.ToString()?.Trim(),
+                            fech_reg = Convert.ToDateTime(record[7]),
+                            hora_reg = TimeOnly.Parse(record[8].ToString()),
+                            empleado = record[0]?.ToString()?.Trim(),
+                            fech_camb = Convert.ToDateTime(record[6]),
+                        };
+
+                        nove_list.Add(histonoveP);
+
+                    }
+                }
+
+                Procesos.InsertarHistoNove(nove_list);
+
+
                 break;
         }
         

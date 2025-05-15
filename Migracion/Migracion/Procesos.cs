@@ -166,6 +166,170 @@ namespace Migracion
 
         }
 
+        public static void InsertarHistoNove(List<t_histonove> nove_list)
+        {
+
+            int contador = 0; // Contador
+
+            using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
+            {
+                conn.Open();
+
+                // Iniciar transacción
+                using (var tx = conn.BeginTransaction())
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.Transaction = tx;
+
+                    foreach (var histonove in nove_list)
+                    {
+                        try
+                        {
+                            cmd.Parameters.Clear(); // ← CRUCIA
+
+                            // Comando SQL con parámetros
+                            cmd.CommandText = @"
+                        INSERT INTO cambioeps (
+                            entidadesnominaanteriorid,
+                            entidadesnominanuevaid,
+                            usuarioid,
+                            fechahora,
+                            empleadoid,
+                            reportartraslado,
+                            fechacambio
+                        )
+                        VALUES (
+                            (SELECT DISTINCT id FROM public.""EntidadesNomina"" WHERE codigo = @codAnt),
+                            (SELECT DISTINCT id FROM public.""EntidadesNomina""WHERE codigo = @codAct),
+                            (SELECT DISTINCT  ""Id"" FROM public.""AspNetUsers"" WHERE ""UserName"" = @userReg),
+                            @fechaHora,
+                            (SELECT DISTINCT ""Id"" FROM public.""Empleados"" WHERE ""CodigoEmpleado"" = @empleado),
+                            @reportarTraslado,
+                            @fechaCambio
+                        );";
+
+
+                            cmd.Parameters.AddWithValue("codAnt", histonove.cod_ant.Trim());
+                            cmd.Parameters.AddWithValue("codAct", histonove.cod_act.Trim());
+                            cmd.Parameters.AddWithValue("userReg", histonove.usua_reg.Trim());
+                            cmd.Parameters.AddWithValue("fechaHora", new DateTime(
+                                histonove.fech_reg.Year,
+                                histonove.fech_reg.Month,
+                                histonove.fech_reg.Day,
+                                histonove.hora_reg.Hour,
+                                histonove.hora_reg.Minute,
+                                histonove.hora_reg.Second
+                            ));
+                            cmd.Parameters.AddWithValue("empleado", histonove.empleado.Trim());
+                            cmd.Parameters.AddWithValue("reportarTraslado", histonove.repo_soi == 1);
+                            cmd.Parameters.AddWithValue("fechaCambio", histonove.fech_camb);
+
+                            // Ejecutar el comando de inserción
+                            cmd.ExecuteNonQuery();
+
+
+
+                            contador++; // Incrementar contador
+                            Console.WriteLine($"Cliente insertado #{contador}"); // Mostrar en consola
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"⚠️ Error al insertar cliente con documento: {ex.Message}");
+                        }
+                    }
+
+                    // Confirmar la transacción
+                    tx.Commit();
+                }
+            }
+
+            Console.WriteLine("Datos insertados correctamente.");
+
+        }
+
+        public static void InsertarHistonoveP(List<t_histonove> nove_pen)
+        {
+
+            int contador = 0; // Contador
+
+            using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
+            {
+                conn.Open();
+
+                // Iniciar transacción
+                using (var tx = conn.BeginTransaction())
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.Transaction = tx;
+
+                    foreach (var histonove in nove_pen)
+                    {
+                        try
+                        {
+                            cmd.Parameters.Clear(); // ← CRUCIA
+
+                            // Comando SQL con parámetros
+                            cmd.CommandText = @"
+                        INSERT INTO cambioeps (
+                            entidadesnominaanteriorid,
+                            entidadesnominanuevaid,
+                            usuarioid,
+                            fechahora,
+                            empleadoid,
+                            reportartraslado,
+                            fechacambio
+                        )
+                        VALUES (
+                            (SELECT DISTINCT id FROM public.""EntidadesNomina"" WHERE codigo = @codAnt),
+                            (SELECT DISTINCT id FROM public.""EntidadesNomina""WHERE codigo = @codAct),
+                            (SELECT DISTINCT  ""Id"" FROM public.""AspNetUsers"" WHERE ""UserName"" = @userReg),
+                            @fechaHora,
+                            (SELECT DISTINCT ""Id"" FROM public.""Empleados"" WHERE ""CodigoEmpleado"" = @empleado),
+                            @reportarTraslado,
+                            @fechaCambio
+                        );";
+
+
+                            cmd.Parameters.AddWithValue("codAnt", histonove.cod_ant.Trim());
+                            cmd.Parameters.AddWithValue("codAct", histonove.cod_act.Trim());
+                            cmd.Parameters.AddWithValue("userReg", histonove.usua_reg.Trim());
+                            cmd.Parameters.AddWithValue("fechaHora", new DateTime(
+                                histonove.fech_reg.Year,
+                                histonove.fech_reg.Month,
+                                histonove.fech_reg.Day,
+                                histonove.hora_reg.Hour,
+                                histonove.hora_reg.Minute,
+                                histonove.hora_reg.Second
+                            ));
+                            cmd.Parameters.AddWithValue("empleado", histonove.empleado.Trim());
+                            cmd.Parameters.AddWithValue("reportarTraslado", histonove.repo_soi == 1);
+                            cmd.Parameters.AddWithValue("fechaCambio", histonove.fech_camb);
+
+                            // Ejecutar el comando de inserción
+                            cmd.ExecuteNonQuery();
+
+
+
+                            contador++; // Incrementar contador
+                            Console.WriteLine($"Cliente insertado #{contador}"); // Mostrar en consola
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"⚠️ Error al insertar cliente con documento: {ex.Message}");
+                        }
+                    }
+
+                    // Confirmar la transacción
+                    tx.Commit();
+                }
+            }
+
+            Console.WriteLine("Datos insertados correctamente.");
+
+        }
+
 
     }
 }
