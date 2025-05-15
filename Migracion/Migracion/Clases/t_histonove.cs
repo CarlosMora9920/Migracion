@@ -16,5 +16,7 @@ namespace Migracion.Clases
         public string empleado { get; set; }
         public double repo_soi { get; set; }
         public DateTime fech_camb { get; set; }
+        public int val_ant { get; set; }
+        public int val_act { get; set; }
     }
 }

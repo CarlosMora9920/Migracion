@@ -231,7 +231,7 @@ namespace Migracion
 
 
                             contador++; // Incrementar contador
-                            Console.WriteLine($"Cliente insertado #{contador}"); // Mostrar en consola
+                            Console.WriteLine($"Ingresando registro.. #{contador}"); // Mostrar en consola
                         }
                         catch (Exception ex)
                         {
@@ -272,7 +272,7 @@ namespace Migracion
 
                             // Comando SQL con parámetros
                             cmd.CommandText = @"
-                        INSERT INTO cambioeps (
+                        INSERT INTO cambiopension (
                             entidadesnominaanteriorid,
                             entidadesnominanuevaid,
                             usuarioid,
@@ -330,6 +330,92 @@ namespace Migracion
 
         }
 
+        public static void InsertarHistonoveS(List<t_histonove> nove_pen)
+        {
+            int contador = 0; // Contador
+
+            using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
+            {
+                conn.Open();
+
+                // Iniciar transacción
+                using (var tx = conn.BeginTransaction())
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.Transaction = tx;
+
+                    foreach (var histonove in nove_pen)
+                    {
+                        try
+                        {
+                            cmd.Parameters.Clear(); // ← CRUCIA
+
+                            // Comando SQL con parámetros
+                            cmd.CommandText = @"
+                        INSERT INTO cambiosalario (
+                            salarioanterior,
+                            salarionuevo,
+                            usuarioid,
+                            fechahora,
+                            empleadoid,
+                            reportavariacion,
+                            fechahoravariacion
+                        )
+                        VALUES (
+                            @val_ant,
+                            @val_act,
+                            (SELECT DISTINCT  ""Id"" FROM public.""AspNetUsers"" WHERE ""UserName"" = @userReg),
+                            @fechaHora,
+                            (SELECT DISTINCT ""Id"" FROM public.""Empleados"" WHERE ""CodigoEmpleado"" = @empleado),
+                            @reportarTraslado,
+                            @fechaCambio
+                        );";
+
+
+                            cmd.Parameters.AddWithValue("val_ant", histonove.val_ant);
+                            cmd.Parameters.AddWithValue("val_act", histonove.val_act);
+                            cmd.Parameters.AddWithValue("userReg", histonove.usua_reg.Trim());
+                            cmd.Parameters.AddWithValue("fechaHora", new DateTime(
+                                histonove.fech_reg.Year,
+                                histonove.fech_reg.Month,
+                                histonove.fech_reg.Day,
+                                histonove.hora_reg.Hour,
+                                histonove.hora_reg.Minute,
+                                histonove.hora_reg.Second
+                            ));
+                            cmd.Parameters.AddWithValue("empleado", histonove.empleado.Trim());
+                            cmd.Parameters.AddWithValue("reportarTraslado", histonove.repo_soi == 1);
+                            cmd.Parameters.AddWithValue("fechaCambio", histonove.fech_camb);
+
+                            // Ejecutar el comando de inserción
+                            cmd.ExecuteNonQuery();
+
+
+
+                            contador++; // Incrementar contador
+                            Console.WriteLine($"Cliente insertado #{contador}"); // Mostrar en consola
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"⚠️ Error al insertar cliente con documento: {ex.Message}");
+                        }
+                    }
+
+                    // Confirmar la transacción
+                    tx.Commit();
+                }
+            }
+
+            Console.WriteLine("Datos insertados correctamente.");
+
+        }
+
+
 
     }
+
+   
+
+
 }

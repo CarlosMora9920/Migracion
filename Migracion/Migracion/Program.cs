@@ -15,11 +15,12 @@ class Program
     {
 
         //Variables que contiene las rutas de las tablas de FoxPro
-        string dbfFilePath       = @"C:\tmp_archivos\vended.dbf";
-        string dbfFileCliente    = @"C:\tmp_archivos\anexosbb.dbf";
-        string dbfFileCiudad     = @"C:\tmp_archivos\ciudad.DBF";
-        string dbfFileHistoNove  = @"C:\tmp_archivos\histonove.DBF";
-        string dbfFileHistonve_P = @"C:\tmp_archivos\histonove_p.dbf";
+        string dbfFilePath        = @"C:\tmp_archivos\vended.dbf";
+        string dbfFileCliente     = @"C:\tmp_archivos\anexosbb.dbf";
+        string dbfFileCiudad      = @"C:\tmp_archivos\ciudad.DBF";
+        string dbfFileHistoNove   = @"C:\tmp_archivos\histonove.DBF";
+        string dbfFileHistonve_P  = @"C:\tmp_archivos\histonove_p.dbf";
+        string dbfFileHistonove_S = @"c:\tmp_archivos\histonove_s.dbf";
 
 
         // Son listas que se generar para almacenar todos los datos de las
@@ -29,6 +30,7 @@ class Program
         var ciudade_lis = new List<t_ciudad>();
         var nove_list   = new List<t_histonove>();
         var nove_pen    = new List<t_histonove>();
+        var nove_sal    = new List<t_histonove>();
 
         //Instanciando la clase proceso
         Procesos pro = new Procesos();
@@ -196,8 +198,37 @@ class Program
                     }
                 }
 
-                Procesos.InsertarHistoNove(nove_list);
+                Procesos.InsertarHistonoveP(nove_list);
 
+
+                break;
+            case 5:
+
+                using (FileStream fc = File.OpenRead(dbfFileHistonove_S))
+                {
+                    var reader = new DBFReader(fc);
+                    reader.CharEncoding = System.Text.Encoding.UTF8;
+
+                    object[] record;
+                    while ((record = reader.NextRecord()) != null)
+                    {
+                        var histonoveP = new t_histonove
+                        {
+                            val_ant = Convert.ToInt32(record[2]),
+                            val_act = Convert.ToInt32(record[3]),
+                            usua_reg = record[9]?.ToString()?.Trim(),
+                            fech_reg = Convert.ToDateTime(record[7]),
+                            hora_reg = TimeOnly.Parse(record[8].ToString()),
+                            empleado = record[0]?.ToString()?.Trim(),
+                            fech_camb = Convert.ToDateTime(record[6]),
+                        };
+
+                        nove_sal.Add(histonoveP);
+
+                    }
+                }
+
+                Procesos.InsertarHistonoveS(nove_sal);
 
                 break;
         }
