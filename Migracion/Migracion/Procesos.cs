@@ -399,6 +399,7 @@ namespace Migracion
                         catch (Exception ex)
                         {
                             Console.WriteLine($"⚠️ Error al insertar cliente con documento: {ex.Message}");
+                            //ex.InnerException
                         }
                     }
 
@@ -411,7 +412,103 @@ namespace Migracion
 
         }
 
+        public static double CalcularRentabilidad(
+        double pvtaxx, double pcosto, int pmodo, double piva,
+        double pconsumo, int picon_1111,
+        int pr_tipoiup, double pr_vr_ibu, DateTime pr_fech_iu, int pr_gen_iup)
+        {
+            if (double.IsNaN(picon_1111)) // FoxPro hace TYPE, aquí usamos NaN como equivalente inválido
+                picon_1111 = 0;
 
+            double x_porc = 0.00;
+
+            if (pvtaxx == 0 || pcosto == 0)
+                return 0;
+
+            double xFact_iup = 0.00;
+            double x_vr_ibu = 0.00;
+
+            // Determinar impuesto saludable
+            switch (pr_tipoiup)
+            {
+                case 1:
+                    xFact_iup = FPorcIcup(pr_fech_iu);
+                    break;
+
+                case 2:
+                    // Bebidas: no se hace nada según lógica actual
+                    break;
+            }
+
+            double x_iva = 0;
+
+            switch (pmodo)
+            {
+                case 1:
+                    if (pcosto > 0)
+                    {
+                        x_iva = 1 + (piva / 100.0);
+                        x_porc = Math.Round(((pvtaxx / ((pcosto * x_iva) + pconsumo)) - 1) * 100, 2);
+                    }
+                    break;
+
+                case 2:
+                    x_iva = 1 + (piva / 100.0);
+                    x_porc = Math.Round((1 - ((pcosto + pconsumo) / (pvtaxx / x_iva))) * 100, 2);
+                    break;
+
+                case 3:
+                    x_iva = 1 + ((piva + xFact_iup) / 100.0);
+
+                    if (picon_1111 == 1)
+                    {
+                        x_porc = pvtaxx / (((pcosto + pr_vr_ibu) * x_iva) + pconsumo);
+                        x_porc = (x_porc - 1) * 100;
+                        x_porc = Math.Round(x_porc, 2);
+                    }
+                    else
+                    {
+                        x_porc = Math.Round(((pvtaxx / ((pcosto + pr_vr_ibu) * x_iva)) - 1) * 100.0, 2);
+                    }
+                    break;
+
+                case 4:
+                    x_iva = 1 + ((piva + xFact_iup) / 100.0);
+
+                    if (picon_1111 == 1)
+                    {
+                        x_porc = pvtaxx / ((pcosto * x_iva) + pconsumo + pr_vr_ibu);
+                        x_porc = (x_porc - 1) * 100;
+                        x_porc = Math.Round(x_porc, 2);
+                    }
+                    else
+                    {
+                        x_porc = (pvtaxx - pconsumo) / ((pcosto * x_iva) + pr_vr_ibu);
+                        x_porc = (x_porc - 1) * 100;
+                        x_porc = Math.Round(x_porc, 2);
+                    }
+                    break;
+            }
+
+            if (x_porc > 999.99)
+                x_porc = 999.99;
+
+            if (x_porc < 0)
+                x_porc = 0; // FoxPro no hace nada, puedes decidir si lo dejas en cero
+
+            return x_porc;
+
+        }
+
+
+        private static double FPorcIcup(DateTime fecha)
+        {
+            // Simulación. Sustituir con la lógica real de cálculo del impuesto por fecha.
+            int año = fecha.Year;
+            if (año >= 2024) return 10.0;
+            if (año == 2023) return 8.0;
+            return 5.0;
+        }
 
     }
 
