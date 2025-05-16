@@ -21,6 +21,7 @@ class Program
         string dbfFileHistoNove   = @"C:\tmp_archivos\histonove.DBF";
         string dbfFileHistonve_P  = @"C:\tmp_archivos\histonove_p.dbf";
         string dbfFileHistonove_S = @"c:\tmp_archivos\histonove_s.dbf";
+        string dbfFileitems       = @"c:\tmp_archivos\items.dbf";
 
 
         // Son listas que se generar para almacenar todos los datos de las
@@ -229,6 +230,11 @@ class Program
                 }
 
                 Procesos.InsertarHistonoveS(nove_sal);
+
+                break;
+            case 6:
+
+
 
                 break;
         }
