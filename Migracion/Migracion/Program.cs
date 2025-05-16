@@ -21,7 +21,7 @@ class Program
         string dbfFileHistoNove   = @"C:\tmp_archivos\histonove.DBF";
         string dbfFileHistonve_P  = @"C:\tmp_archivos\histonove_p.dbf";
         string dbfFileHistonove_S = @"c:\tmp_archivos\histonove_s.dbf";
-
+        string dbfFileDocum       = @"j:\businsas\mersas\datos\docum.dbf";
 
         // Son listas que se generar para almacenar todos los datos de las
         // tablas del FoxPro
@@ -31,6 +31,7 @@ class Program
         var nove_list   = new List<t_histonove>();
         var nove_pen    = new List<t_histonove>();
         var nove_sal    = new List<t_histonove>();
+        var docum       = new List<t_docum>();
 
         //Instanciando la clase proceso
         Procesos pro = new Procesos();
@@ -230,6 +231,23 @@ class Program
 
                 Procesos.InsertarHistonoveS(nove_sal);
 
+                break;
+            case 6:
+
+                using (FileStream fc = File.OpenRead(dbfFileDocum))
+                {
+                    var reader = new DBFReader(fc);
+                    reader.CharEncoding = System.Text.Encoding.UTF8;
+
+                    object[] record;
+                    while ((record = reader.NextRecord()) != null)
+                    {
+                        var documentos = new t_docum
+                        {
+
+                        };
+                    }
+                }
                 break;
         }
         
