@@ -510,6 +510,141 @@ namespace Migracion
             return 5.0;
         }
 
+
+        public static decimal FCalcImp(
+    decimal pVrBase,
+    decimal pFiva,
+    decimal pVrIconsu,
+    int pModo,
+    int pRound,
+    int pmTipoIup,
+    decimal pmVrIbu,
+    DateTime pmFechIu,
+    int pmGenIup,
+    string pReturnUp)
+        {
+            int xNumRound = pRound;
+            decimal xFactIup = 0.00m;
+            decimal xVrIbu = 0.00m;
+
+            if (pmGenIup == 1)
+            {
+                switch (pmTipoIup)
+                {
+                    case 1: // Comestibles
+                        xFactIup = FporcIcup(pmFechIu);
+                        break;
+                    case 2: // Bebidas
+                        xVrIbu = pmVrIbu;
+                        break;
+                }
+            }
+
+            decimal xVrBase = 0.00m;
+            decimal xRetorno = 0.00m;
+            decimal xBaseGrav = 0.00m;
+            decimal xCalcIva = 0.00m;
+            decimal xCalcUp = 0.00m;
+
+            switch (pModo)
+            {
+                case 1: // Valor base con impuestos incluidos
+                    xVrBase = pVrBase - pVrIconsu - xVrIbu;
+
+                    decimal divisor = Math.Round(1 + Math.Round((pFiva + xFactIup) / 100.00m, 4), 4);
+                    xBaseGrav = Math.Round(xVrBase / divisor, xNumRound);
+
+                    if (pFiva > 0 && xFactIup == 0)
+                    {
+                        xCalcIva = xVrBase - xBaseGrav;
+                        xCalcUp = pmTipoIup == 2 ? xVrIbu : 0;
+                    }
+                    else if (pFiva == 0 && xFactIup > 0)
+                    {
+                        xCalcIva = 0;
+                        xCalcUp = xVrBase - xBaseGrav;
+                    }
+                    else if (pFiva > 0 && xFactIup > 0)
+                    {
+                        xCalcUp = Math.Round(xBaseGrav * Math.Round(xFactIup / 100.00m, 4), 2);
+                        xCalcIva = xVrBase - xBaseGrav - xCalcUp;
+                    }
+                    else
+                    {
+                        xCalcIva = 0;
+                        xCalcUp = pmTipoIup == 2 ? xVrIbu : 0;
+                    }
+                    break;
+
+                case 2: // Valor base sin IVA ni ultraprocesados, pero con impoconsumo
+                    xVrBase = pVrBase - pVrIconsu;
+
+                    if (pFiva > 0 && xFactIup == 0)
+                    {
+                        xCalcIva = Math.Round(xVrBase * Math.Round(pFiva / 100.00m, 4), xNumRound);
+                        xCalcUp = pmTipoIup == 2 ? xVrIbu : 0;
+                    }
+                    else if (pFiva == 0 && xFactIup > 0)
+                    {
+                        xCalcIva = 0;
+                        xCalcUp = Math.Round(xVrBase * Math.Round(xFactIup / 100.00m, 4), xNumRound);
+                    }
+                    else if (pFiva > 0 && xFactIup > 0)
+                    {
+                        xCalcUp = Math.Round(xVrBase * Math.Round(xFactIup / 100.00m, 4), 2);
+                        xCalcIva = Math.Round(xVrBase * Math.Round(pFiva / 100.00m, 4), 2);
+                    }
+                    else
+                    {
+                        xCalcIva = 0;
+                        xCalcUp = pmTipoIup == 2 ? xVrIbu : 0;
+                    }
+                    break;
+            }
+
+            switch (pReturnUp)
+            {
+                case "U":
+                    xRetorno = xCalcUp;
+                    break;
+                case "I":
+                    xRetorno = xCalcIva;
+                    break;
+                case "A":
+                    xRetorno = xCalcIva + xCalcUp;
+                    break;
+            }
+
+            return xRetorno;
+        }
+
+
+        public static decimal FporcIcup(DateTime pFechCaus)
+        {
+            decimal xIcup = 0.00m;
+
+            if (pFechCaus.Year == 2023)
+            {
+                DateTime xFeIcup = new DateTime(2023, 11, 1);
+
+                if (pFechCaus >= xFeIcup)
+                {
+                    xIcup = 10.00m;
+                }
+            }
+            else if (pFechCaus.Year == 2024)
+            {
+                xIcup = 15.00m;
+            }
+            else if (pFechCaus.Year == 2025)
+            {
+                xIcup = 20.00m;
+            }
+
+            return xIcup;
+        }
+
+
     }
 
    

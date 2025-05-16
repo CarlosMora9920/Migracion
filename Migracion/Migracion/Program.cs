@@ -21,7 +21,12 @@ class Program
         string dbfFileHistoNove   = @"C:\tmp_archivos\histonove.DBF";
         string dbfFileHistonve_P  = @"C:\tmp_archivos\histonove_p.dbf";
         string dbfFileHistonove_S = @"c:\tmp_archivos\histonove_s.dbf";
+<<<<<<< HEAD
         string dbfFileDocum       = @"j:\businsas\mersas\datos\docum.dbf";
+=======
+        string dbfFileitems       = @"c:\tmp_archivos\items.dbf";
+
+>>>>>>> f3b2b14c53e529f96f8df1506b00a9521a446f56
 
         // Son listas que se generar para almacenar todos los datos de las
         // tablas del FoxPro
@@ -234,6 +239,7 @@ class Program
                 break;
             case 6:
 
+<<<<<<< HEAD
                 using (FileStream fc = File.OpenRead(dbfFileDocum))
                 {
                     var reader = new DBFReader(fc);
@@ -248,6 +254,10 @@ class Program
                         };
                     }
                 }
+=======
+
+
+>>>>>>> f3b2b14c53e529f96f8df1506b00a9521a446f56
                 break;
         }
         
