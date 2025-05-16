@@ -32,6 +32,7 @@ class Program
         var nove_list   = new List<t_histonove>();
         var nove_pen    = new List<t_histonove>();
         var nove_sal    = new List<t_histonove>();
+        var items_list  = new List<t_items>();
 
         //Instanciando la clase proceso
         Procesos pro = new Procesos();
@@ -235,6 +236,27 @@ class Program
             case 6:
 
 
+
+                break;
+            case 7: // items
+
+                using (FileStream fc = File.OpenRead(dbfFileitems))
+                {
+                    var reader = new DBFReader(fc);
+                    reader.CharEncoding = System.Text.Encoding.UTF8;
+
+                    object[] record;
+                    while ((record = reader.NextRecord()) != null)
+                    {
+                        var itemsPick = new t_items
+                        {
+                            
+                        };
+
+                        items_list.Add(itemsPick);
+
+                    }
+                }
 
                 break;
         }
