@@ -117,7 +117,7 @@ namespace Migracion.Clases
         public int es_dfnfp { get; set; }
         public int varifnfp { get; set; }
         public int DESFINNIIF { get; set; }
-        public int bod_asoc { get; set; }
+        public string bod_asoc { get; set; }
         public int descuento { get; set; }
         public int por_rentab { get; set; }
         public int confirpre { get; set; }
@@ -125,7 +125,8 @@ namespace Migracion.Clases
         public DateTime fech1comp { get; set; }
         public int vr_imps { get; set; }
         public string cod_ref { get; set; }
-        public int refer { get; set; }
+        public string refer { get; set; }
+        public int pvtali { get; set; }
 
     }
 }
