@@ -1,11 +1,14 @@
 ﻿using Migracion.Clases;
 using Npgsql;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Migracion
 {
@@ -427,7 +430,7 @@ namespace Migracion
                     cmd.Connection = conn;
                     cmd.Transaction = tx;
 
-                    foreach (var histonove in items_list)
+                    foreach (var items in items_list)
                     {
                         try
                         {
@@ -461,28 +464,183 @@ namespace Migracion
                             ""DescuentoPorcentaje"",""RentabilidadSugerida"",""ConfirmarCambioPrecio"",""ProductoOfertado"",""FechaPrimerMovimiento"",""TipoImpuestoAlimentos"",
                             ""ValorTipoImpuestoAlimentos"",""GeneraImpuestoSaludable"",""CodigoReferencia"",""Referencia""
                             ) VALUES (
-                            '{xContador}',
-                            '{items.codigo?.Trim()}',
-                            '{items.tipo}',
-                            '{items.fecha_cre:yyyy-MM-dd HH:mm:ss}',
-                            ...
+                             @Codigo,@IdTipoProducto, @FechaCreacion, @Nombre, @NombreCorto, @ReferenciaFabrica,
+                             @PesoUnitario, @UnidadesPorCaja, @IdCategoria,
+                             (SELECT DISTINCT ""id"" FROM ""SubgruposProductos"" WHERE Codigo = @subgrupo LIMIT 1),
+                             (SELECT DISTINCT ""id"" FROM ""MarcasProductos"" WHERE Codigo = @marca LIMIT 1) ,
+                             @PesoDrenado, @Ean8, @Ean13, @Estado,@Unidad,@Talla
+                             (SELECT DISTINCT ""id"" FROM ""LineasProductos"" WHERE Codigo = @linea LIMIT 1),
+                             (SELECT DISTINCT ""id"" FROM ""SublineasProductos"" WHERE Codigo = @sublinea LIMIT 1),
+                             @NoAutorizar, @Inactivo,@EsKIT, @Iva, @Precio,@PrecioAnterior,@PrecioCambio,@Rentabilidad,
+                             @BaseImpuestoConsumo,@IvaExento,@ImpuestoConsumo,@IdGrupoContable,@FactorImpuestoConsumo,
+                             @IdRetFuente,@CostoAjuste, @Fruver,@BolsaAgro,@ModificaPrecio,@Fenaice,@AcumulaTira,
+                             @SubsidioDesempleo, @ModificaCantidad, @BotFut, @ContabilizarGrabado, @NoAutorizaCompra,
+                             @BalanzaToledo, @PrefijoEAN, @DescuentoAsohofrucol, @Motocicleta, @Pedido, @Codensa, @Ingreso,
+                             @CheckeoPrecio, @IdEvento, @Tipo, @AdmiteDescuento, @DescuentoMaximo, @Decimales, @FechaCambio,
+                             @CostoReposicion, @FenaicePorcentaje, @BotFutPorcentaje, @PrefijoEANPorcentaje, @CodensaPorcentaje,
+                             @CodigoAlterno,@CCosto,@ExcluirDeListado,@PermitirSaldoEnRojo,@ExigirTarjetMercapesos,@Corrosivo,
+                             @CAS,@CategoriaCAS,@PermitirVentaPorDebajoCosto,@DetalleAlElaborarDocumento@,@UnicamenteManejarCantidad,
+                             @SolicitarSerieAlFacturar,@TerceroAutomaticoPOS,@ProductoGenerico,@PesoBruto,@PesoNeto,@PesoTara,
+                             @UnidadMinimaDeVenta,@Factor,@InicioMercapesos,@FinalMercapesos,@DescuentoEspecial,
+                             @FactorDescuento,@ValorDescuentoFijo,@InicioDescuento,@FinalDescuento,@DecodificarProducto,
+                             @DiaDecodificacion,@DiaUsuarioDecodificacion,@ValidarMaxVentasPorTercero,@UnidadMaximaVentas,@NoIncluirDespacho,@FechaBloqueoPedido,
+                             @TipoControl,@DiasSiguientesCompra,@PrecioVenta3,@NoIncluirEnInventarioParaPedido,@AutorizarTrasladoProducto,
+                             @PrecioControlVingilancia,@NoIncluirreporteChequeo,@NoCalcularCostoPromedio,@ProductoSobreStock,@EnviarAAsopanela,@UnidadArticulo,
+                             @GrupoDescuento@,@CodigoEan1,@CodigoEan2,@ProductoInAndOut,@DomiciliosCom,@PesoPOS,
+                             @OrdenadoInicioFactura,@ModificarConTolerancia,@PorcentajeTolerancia,@Stock,@ExcluidoCOVID,
+                             (SELECT DISTINCT ""Id"" FROM ""UnidadesDIAN"" WHERE ""Codigo"" = @unidcantfe LIMIT 1),
+                             (SELECT DISTINCT ""Id"" FROM ""TipoBienDIAN"" WHERE ""Codigo"" = @tipobiend LIMIT 1),
+                             @DiasSinIVA,@DescuentoFNFP,@IdVariedadFNFP,@DescuentoNIIF,@NoUtilizar,
+                             @FactorImpuestoConsumoRest,
+                             (SELECT DISTINCT ""Id"" FROM bodegas WHERE Codigo = @bod_asoc LIMIT 1),
+                             (SELECT DISTINCT ""id"" FROM unidaddemedida WHERE descripcion =@unidad LIMIT 1),
+                             @PrecioIva,@ValorIva,@CostoAjusteNIIF,
+                             @DescuentoPorcentaje,
+                             @RentabilidadSugerida,@ConfirmarCambioPrecio,@ProductoOfertado,@FechaPrimerMovimiento,@TipoImpuestoAlimentos,
+                             @ValorTipoImpuestoAlimentos,@GeneraImpuestoSaludable,@CodigoReferencia,@Referencia
                             );";
 
 
-                            cmd.Parameters.AddWithValue("val_ant", histonove.val_ant);
-                            cmd.Parameters.AddWithValue("val_act", histonove.val_act);
-                            cmd.Parameters.AddWithValue("userReg", histonove.usua_reg.Trim());
-                            cmd.Parameters.AddWithValue("fechaHora", new DateTime(
-                                histonove.fech_reg.Year,
-                                histonove.fech_reg.Month,
-                                histonove.fech_reg.Day,
-                                histonove.hora_reg.Hour,
-                                histonove.hora_reg.Minute,
-                                histonove.hora_reg.Second
-                            ));
-                            cmd.Parameters.AddWithValue("empleado", histonove.empleado.Trim());
-                            cmd.Parameters.AddWithValue("reportarTraslado", histonove.repo_soi == 1);
-                            cmd.Parameters.AddWithValue("fechaCambio", histonove.fech_camb);
+                            cmd.Parameters.AddWithValue("@Codigo", items.Codigo);
+                            cmd.Parameters.AddWithValue("@IdTipoProducto", items.tipo);
+                            cmd.Parameters.AddWithValue("@FechaCreacion", items.fecha_cre);
+                            cmd.Parameters.AddWithValue("@Nombre", items.nombre);
+                            cmd.Parameters.AddWithValue("@NombreCorto", items.shortname);
+                            cmd.Parameters.AddWithValue("@ReferenciaFabrica", items.refabrica);
+                            cmd.Parameters.AddWithValue("@PesoUnitario", items.peso_uni);
+                            cmd.Parameters.AddWithValue("@UnidadesPorCaja", items.undxcaja);
+                            cmd.Parameters.AddWithValue("@IdCategoria", 0);
+                            cmd.Parameters.AddWithValue("@subgrupo", items.subgrupo);
+                            cmd.Parameters.AddWithValue("@marca", items.marca);
+                            cmd.Parameters.AddWithValue("@PesoDrenado", items.pdrenado);
+                            cmd.Parameters.AddWithValue("@Ean8", items.cod_ean8);
+                            cmd.Parameters.AddWithValue("@Ean13", items.cod_bar);
+                            cmd.Parameters.AddWithValue("@Estado", items.bloqueado == 1 ? "false" : "true");
+                            cmd.Parameters.AddWithValue("@Unidad", items.unidad);
+                            cmd.Parameters.AddWithValue("@Talla", items.talla);
+                            cmd.Parameters.AddWithValue("@linea", items.linea);
+                            cmd.Parameters.AddWithValue("@sublinea", items.sublinea);
+                            cmd.Parameters.AddWithValue("@NoAutorizar", items.no_compra);
+                            cmd.Parameters.AddWithValue("@Inactivo", items.bloqueado);
+                            cmd.Parameters.AddWithValue("@EsKIT", items.es_kitpro ==1 ? "false":"true");
+                            cmd.Parameters.AddWithValue("@Iva", items.iva);
+                            cmd.Parameters.AddWithValue("@Precio", items.pvtali);
+                            cmd.Parameters.AddWithValue("@PrecioAnterior", items.pv);
+                            cmd.Parameters.AddWithValue("@PrecioCambio", precioCambio);
+                            cmd.Parameters.AddWithValue("@Rentabilidad", rentabilidad);
+                            cmd.Parameters.AddWithValue("@BaseImpuestoConsumo", baseImpuestoConsumo);
+                            cmd.Parameters.AddWithValue("@IvaExento", ivaExento);
+                            cmd.Parameters.AddWithValue("@ImpuestoConsumo", impuestoConsumo);
+                            cmd.Parameters.AddWithValue("@IdGrupoContable", idGrupoContable);
+                            cmd.Parameters.AddWithValue("@FactorImpuestoConsumo", factorImpuestoConsumo);
+                            cmd.Parameters.AddWithValue("@IdRetFuente", idRetFuente);
+                            cmd.Parameters.AddWithValue("@CostoAjuste", costoAjuste);
+                            cmd.Parameters.AddWithValue("@Fruver", fruver);
+                            cmd.Parameters.AddWithValue("@BolsaAgro", bolsaAgro);
+                            cmd.Parameters.AddWithValue("@ModificaPrecio", modificaPrecio);
+                            cmd.Parameters.AddWithValue("@Fenaice", fenaice);
+                            cmd.Parameters.AddWithValue("@AcumulaTira", acumulaTira);
+                            cmd.Parameters.AddWithValue("@SubsidioDesempleo", subsidioDesempleo);
+                            cmd.Parameters.AddWithValue("@ModificaCantidad", modificaCantidad);
+                            cmd.Parameters.AddWithValue("@BotFut", botFut);
+                            cmd.Parameters.AddWithValue("@ContabilizarGrabado", contabilizarGrabado);
+                            cmd.Parameters.AddWithValue("@NoAutorizaCompra", noAutorizaCompra);
+                            cmd.Parameters.AddWithValue("@BalanzaToledo", balanzaToledo);
+                            cmd.Parameters.AddWithValue("@PrefijoEAN", prefijoEAN);
+                            cmd.Parameters.AddWithValue("@DescuentoAsohofrucol", descuentoAsohofrucol);
+                            cmd.Parameters.AddWithValue("@Motocicleta", motocicleta);
+                            cmd.Parameters.AddWithValue("@Pedido", pedido);
+                            cmd.Parameters.AddWithValue("@Codensa", codensa);
+                            cmd.Parameters.AddWithValue("@Ingreso", ingreso);
+                            cmd.Parameters.AddWithValue("@CheckeoPrecio", checkeoPrecio);
+                            cmd.Parameters.AddWithValue("@IdEvento", idEvento);
+                            cmd.Parameters.AddWithValue("@Tipo", tipo);
+                            cmd.Parameters.AddWithValue("@AdmiteDescuento", admiteDescuento);
+                            cmd.Parameters.AddWithValue("@DescuentoMaximo", descuentoMaximo);
+                            cmd.Parameters.AddWithValue("@Decimales", decimales);
+                            cmd.Parameters.AddWithValue("@FechaCambio", fechaCambio);
+                            cmd.Parameters.AddWithValue("@CostoReposicion", costoReposicion);
+                            cmd.Parameters.AddWithValue("@FenaicePorcentaje", fenaicePorcentaje);
+                            cmd.Parameters.AddWithValue("@BotFutPorcentaje", botFutPorcentaje);
+                            cmd.Parameters.AddWithValue("@PrefijoEANPorcentaje", prefijoEANPorcentaje);
+                            cmd.Parameters.AddWithValue("@CodensaPorcentaje", codensaPorcentaje);
+                            cmd.Parameters.AddWithValue("@CodigoAlterno", codigoAlterno);
+                            cmd.Parameters.AddWithValue("@CCosto", cCosto);
+                            cmd.Parameters.AddWithValue("@ExcluirDeListado", excluirDeListado);
+                            cmd.Parameters.AddWithValue("@PermitirSaldoEnRojo", permitirSaldoEnRojo);
+                            cmd.Parameters.AddWithValue("@ExigirTarjetMercapesos", exigirTarjetMercapesos);
+                            cmd.Parameters.AddWithValue("@Corrosivo", corrosivo);
+                            cmd.Parameters.AddWithValue("@CAS", cas);
+                            cmd.Parameters.AddWithValue("@CategoriaCAS", categoriaCAS);
+                            cmd.Parameters.AddWithValue("@PermitirVentaPorDebajoCosto", permitirVentaPorDebajoCosto);
+                            cmd.Parameters.AddWithValue("@DetalleAlElaborarDocumento", detalleAlElaborarDocumento);
+                            cmd.Parameters.AddWithValue("@UnicamenteManejarCantidad", unicamenteManejarCantidad);
+                            cmd.Parameters.AddWithValue("@SolicitarSerieAlFacturar", solicitarSerieAlFacturar);
+                            cmd.Parameters.AddWithValue("@TerceroAutomaticoPOS", terceroAutomaticoPOS);
+                            cmd.Parameters.AddWithValue("@ProductoGenerico", productoGenerico);
+                            cmd.Parameters.AddWithValue("@PesoBruto", pesoBruto);
+                            cmd.Parameters.AddWithValue("@PesoNeto", pesoNeto);
+                            cmd.Parameters.AddWithValue("@PesoTara", pesoTara);
+                            cmd.Parameters.AddWithValue("@UnidadMinimaDeVenta", unidadMinimaDeVenta);
+                            cmd.Parameters.AddWithValue("@Factor", factor);
+                            cmd.Parameters.AddWithValue("@InicioMercapesos", inicioMercapesos);
+                            cmd.Parameters.AddWithValue("@FinalMercapesos", finalMercapesos);
+                            cmd.Parameters.AddWithValue("@DescuentoEspecial", descuentoEspecial);
+                            cmd.Parameters.AddWithValue("@FactorDescuento", factorDescuento);
+                            cmd.Parameters.AddWithValue("@ValorDescuentoFijo", valorDescuentoFijo);
+                            cmd.Parameters.AddWithValue("@InicioDescuento", inicioDescuento);
+                            cmd.Parameters.AddWithValue("@FinalDescuento", finalDescuento);
+                            cmd.Parameters.AddWithValue("@DecodificarProducto", decodificarProducto);
+                            cmd.Parameters.AddWithValue("@DiaDecodificacion", diaDecodificacion);
+                            cmd.Parameters.AddWithValue("@DiaUsuarioDecodificacion", diaUsuarioDecodificacion);
+                            cmd.Parameters.AddWithValue("@ValidarMaxVentasPorTercero", validarMaxVentasPorTercero);
+                            cmd.Parameters.AddWithValue("@UnidadMaximaVentas", unidadMaximaVentas);
+                            cmd.Parameters.AddWithValue("@NoIncluirDespacho", noIncluirDespacho);
+                            cmd.Parameters.AddWithValue("@FechaBloqueoPedido", fechaBloqueoPedido);
+                            cmd.Parameters.AddWithValue("@TipoControl", tipoControl);
+                            cmd.Parameters.AddWithValue("@DiasSiguientesCompra", diasSiguientesCompra);
+                            cmd.Parameters.AddWithValue("@PrecioVenta3", precioVenta3);
+                            cmd.Parameters.AddWithValue("@NoIncluirEnInventarioParaPedido", noIncluirEnInventarioParaPedido);
+                            cmd.Parameters.AddWithValue("@AutorizarTrasladoProducto", autorizarTrasladoProducto);
+                            cmd.Parameters.AddWithValue("@PrecioControlVingilancia", precioControlVingilancia);
+                            cmd.Parameters.AddWithValue("@NoIncluirreporteChequeo", noIncluirreporteChequeo);
+                            cmd.Parameters.AddWithValue("@NoCalcularCostoPromedio", noCalcularCostoPromedio);
+                            cmd.Parameters.AddWithValue("@ProductoSobreStock", productoSobreStock);
+                            cmd.Parameters.AddWithValue("@EnviarAAsopanela", enviarAAsopanela);
+                            cmd.Parameters.AddWithValue("@UnidadArticulo", unidadArticulo);
+                            cmd.Parameters.AddWithValue("@GrupoDescuento", grupoDescuento);
+                            cmd.Parameters.AddWithValue("@CodigoEan1", codigoEan1);
+                            cmd.Parameters.AddWithValue("@CodigoEan2", codigoEan2);
+                            cmd.Parameters.AddWithValue("@ProductoInAndOut", productoInAndOut);
+                            cmd.Parameters.AddWithValue("@DomiciliosCom", domiciliosCom);
+                            cmd.Parameters.AddWithValue("@PesoPOS", pesoPOS);
+                            cmd.Parameters.AddWithValue("@OrdenadoInicioFactura", ordenadoInicioFactura);
+                            cmd.Parameters.AddWithValue("@ModificarConTolerancia", modificarConTolerancia);
+                            cmd.Parameters.AddWithValue("@PorcentajeTolerancia", porcentajeTolerancia);
+                            cmd.Parameters.AddWithValue("@Stock", stock);
+                            cmd.Parameters.AddWithValue("@ExcluidoCOVID", excluidoCOVID);
+                            cmd.Parameters.AddWithValue("@unidcantfe", unidCantFe);
+                            cmd.Parameters.AddWithValue("@tipobiend", tipoBienD);
+                            cmd.Parameters.AddWithValue("@DiasSinIVA", diasSinIVA);
+                            cmd.Parameters.AddWithValue("@DescuentoFNFP", descuentoFNFP);
+                            cmd.Parameters.AddWithValue("@IdVariedadFNFP", idVariedadFNFP);
+                            cmd.Parameters.AddWithValue("@DescuentoNIIF", descuentoNIIF);
+                            cmd.Parameters.AddWithValue("@NoUtilizar", noUtilizar);
+                            cmd.Parameters.AddWithValue("@FactorImpuestoConsumoRest", factorImpuestoConsumoRest);
+                            cmd.Parameters.AddWithValue("@bod_asoc", bodAsoc);
+                            cmd.Parameters.AddWithValue("@PrecioIva", precioIva);
+                            cmd.Parameters.AddWithValue("@ValorIva", valorIva);
+                            cmd.Parameters.AddWithValue("@CostoAjusteNIIF", costoAjusteNIIF);
+                            cmd.Parameters.AddWithValue("@DescuentoPorcentaje", descuentoPorcentaje);
+                            cmd.Parameters.AddWithValue("@RentabilidadSugerida", rentabilidadSugerida);
+                            cmd.Parameters.AddWithValue("@ConfirmarCambioPrecio", confirmarCambioPrecio);
+                            cmd.Parameters.AddWithValue("@ProductoOfertado", productoOfertado);
+                            cmd.Parameters.AddWithValue("@FechaPrimerMovimiento", fechaPrimerMovimiento);
+                            cmd.Parameters.AddWithValue("@TipoImpuestoAlimentos", tipoImpuestoAlimentos);
+                            cmd.Parameters.AddWithValue("@ValorTipoImpuestoAlimentos", valorTipoImpuestoAlimentos);
+                            cmd.Parameters.AddWithValue("@GeneraImpuestoSaludable", generaImpuestoSaludable);
+                            cmd.Parameters.AddWithValue("@CodigoReferencia", codigoReferencia);
+                            cmd.Parameters.AddWithValue("@Referencia", referencia);
 
                             // Ejecutar el comando de inserción
                             cmd.ExecuteNonQuery();
