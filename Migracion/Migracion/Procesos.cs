@@ -412,6 +412,105 @@ namespace Migracion
 
         }
 
+        public static void InsertarProductos(List<t_items> items_list)
+        {
+            int contador = 0; // Contador
+
+            using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
+            {
+                conn.Open();
+
+                // Iniciar transacción
+                using (var tx = conn.BeginTransaction())
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.Transaction = tx;
+
+                    foreach (var histonove in items_list)
+                    {
+                        try
+                        {
+                            cmd.Parameters.Clear(); // ← CRUCIAL
+
+                            // Comando SQL con parámetros
+                            cmd.CommandText = $@"
+                            INSERT INTO ""Productos"" (
+                            ""Codigo"", ""IdTipoProducto"", ""FechaCreacion"", ""Nombre"", ""NombreCorto"", ""ReferenciaFabrica"",
+                            ""PesoUnitario"", ""UnidadesPorCaja"", ""IdCategoria"", ""IdSubgruposProductos"", ""IdMarcasProductos"",
+                            ""PesoDrenado"", ""Ean8"", ""Ean13"", ""Estado"", ""Unidad"", ""Talla"", ""IdLineasProductos"", ""IdSublineasProductos"",
+                            ""NoAutorizar"", ""Inactivo"", ""EsKIT"", ""Iva"", ""Precio"", ""PrecioAnterior"", ""PrecioCambio"", ""Rentabilidad"",
+                            ""BaseImpuestoConsumo"", ""IvaExento"", ""ImpuestoConsumo"", ""IdGrupoContable"", ""FactorImpuestoConsumo"",
+                            ""IdRetFuente"", ""CostoAjuste"", ""Fruver"", ""BolsaAgro"", ""ModificaPrecio"", ""Fenaice"", ""AcumulaTira"",
+                            ""SubsidioDesempleo"", ""ModificaCantidad"", ""BotFut"", ""ContabilizarGrabado"", ""NoAutorizaCompra"",
+                            ""BalanzaToledo"", ""PrefijoEAN"", ""DescuentoAsohofrucol"", ""Motocicleta"", ""Pedido"", ""Codensa"", ""Ingreso"",
+                            ""CheckeoPrecio"", ""IdEvento"", ""Tipo"", ""AdmiteDescuento"", ""DescuentoMaximo"", ""Decimales"", ""FechaCambio"",
+                            ""CostoReposicion"", ""FenaicePorcentaje"", ""BotFutPorcentaje"", ""PrefijoEANPorcentaje"", ""CodensaPorcentaje"",
+                            ""CodigoAlterno"",""CCosto"",""ExcluirDeListado"",""PermitirSaldoEnRojo"",""ExigirTarjetMercapesos"",""Corrosivo"",
+                            ""CAS"",""CategoriaCAS"",""PermitirVentaPorDebajoCosto"",""DetalleAlElaborarDocumento"",""UnicamenteManejarCantidad"",
+                            ""SolicitarSerieAlFacturar"",""TerceroAutomaticoPOS"",""ProductoGenerico"",""PesoBruto"",""PesoNeto"",""PesoTara"",
+                            ""UnidadMinimaDeVenta"",""Factor"",""InicioMercapesos"",""FinalMercapesos"",""DescuentoEspecial"",
+                            ""FactorDescuento"",""ValorDescuentoFijo"",""InicioDescuento"",""FinalDescuento"",""DecodificarProducto"",
+                            ""DiaDecodificacion"",""DiaUsuarioDecodificacion"",""ValidarMaxVentasPorTercero"",""UnidadMaximaVentas"",""NoIncluirDespacho"",""FechaBloqueoPedido"",
+                            ""TipoControl"",""DiasSiguientesCompra"",""PrecioVenta3"",""NoIncluirEnInventarioParaPedido"",""AutorizarTrasladoProducto"",
+                            ""PrecioControlVingilancia"",""NoIncluirreporteChequeo"",""NoCalcularCostoPromedio"",""ProductoSobreStock"",""EnviarAAsopanela"",""UnidadArticulo"",
+                            ""GrupoDescuento"",""CodigoEan1"",""CodigoEan2"",""ProductoInAndOut"",""DomiciliosCom"",""PesoPOS"",
+                            ""OrdenadoInicioFactura"",""ModificarConTolerancia"",""PorcentajeTolerancia"",""Stock"",""ExcluidoCOVID"",""IdUnidadDIAN"",
+                            ""IdTipoBienDIAN"",""DiasSinIVA"",""DescuentoFNFP"",""IdVariedadFNFP"",""DescuentoNIIF"",""NoUtilizar"",
+                            ""FactorImpuestoConsumoRest"",""IdBodega"",""IdUnidadProducto"",""PrecioIva"",""ValorIva"",""CostoAjusteNIIF"",
+                            ""DescuentoPorcentaje"",""RentabilidadSugerida"",""ConfirmarCambioPrecio"",""ProductoOfertado"",""FechaPrimerMovimiento"",""TipoImpuestoAlimentos"",
+                            ""ValorTipoImpuestoAlimentos"",""GeneraImpuestoSaludable"",""CodigoReferencia"",""Referencia""
+                            ) VALUES (
+                            '{xContador}',
+                            '{items.codigo?.Trim()}',
+                            '{items.tipo}',
+                            '{items.fecha_cre:yyyy-MM-dd HH:mm:ss}',
+                            ...
+                            );";
+
+
+                            cmd.Parameters.AddWithValue("val_ant", histonove.val_ant);
+                            cmd.Parameters.AddWithValue("val_act", histonove.val_act);
+                            cmd.Parameters.AddWithValue("userReg", histonove.usua_reg.Trim());
+                            cmd.Parameters.AddWithValue("fechaHora", new DateTime(
+                                histonove.fech_reg.Year,
+                                histonove.fech_reg.Month,
+                                histonove.fech_reg.Day,
+                                histonove.hora_reg.Hour,
+                                histonove.hora_reg.Minute,
+                                histonove.hora_reg.Second
+                            ));
+                            cmd.Parameters.AddWithValue("empleado", histonove.empleado.Trim());
+                            cmd.Parameters.AddWithValue("reportarTraslado", histonove.repo_soi == 1);
+                            cmd.Parameters.AddWithValue("fechaCambio", histonove.fech_camb);
+
+                            // Ejecutar el comando de inserción
+                            cmd.ExecuteNonQuery();
+
+
+
+                            contador++; // Incrementar contador
+                            Console.WriteLine($"Cliente insertado #{contador}"); // Mostrar en consola
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"⚠️ Error al insertar cliente con documento: {ex.InnerException}");
+                            conn.Close();
+                            //ex.InnerException
+                        }
+                    }
+
+                    // Confirmar la transacción
+                    tx.Commit();
+                }
+            }
+
+            Console.WriteLine("Datos insertados correctamente.");
+
+        }
+
+
+
         public static double CalcularRentabilidad(
         double pvtaxx, double pcosto, int pmodo, double piva,
         double pconsumo, int picon_1111,

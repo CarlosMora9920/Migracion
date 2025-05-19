@@ -33,11 +33,11 @@ class Program
         var nove_list   = new List<t_histonove>();
         var nove_pen    = new List<t_histonove>();
         var nove_sal    = new List<t_histonove>();
-<<<<<<< HEAD
+
         var items_list  = new List<t_items>();
-=======
+
         var docum       = new List<t_docum>();
->>>>>>> a7f8f79935f8b4ddac609bcb2b8918f58739c315
+
 
         //Instanciando la clase proceso
         Procesos pro = new Procesos();
