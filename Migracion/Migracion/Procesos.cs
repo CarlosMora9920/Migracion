@@ -901,27 +901,10 @@ namespace Migracion
             return xIcup;
         }
 
-        public static void InsertarDocumentos(List<t_docum> docum_list)
-        {
-            int contador = 0; // Contador
 
-            using (var conn = new NpgsqlConnection("Host=10.141.10.10:9088;Username=postgres;Password=#756913%;Database=mercacentro"))
-            {
-                conn.Open();
-                //Iniciar transaccion
-                using (var tx = conn.BeginTransaction())
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.Transaction = tx;
+    }
 
-                    foreach(var )
-                    {
+   
 
-                    }
-                }
-            }
-            Console.WriteLine("Datos insertados correctamente.");
-        }
-    }       
+
 }
