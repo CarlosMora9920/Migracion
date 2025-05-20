@@ -240,8 +240,62 @@ class Program
                 break;
             case 6:
 
+                using (FileStream fc = File.OpenRead(dbfFileDocum))
+                {
+                    var reader = new DBFReader(fc);
+                    reader.CharEncoding = System.Text.Encoding.UTF8;
 
-                break;   
+                    object[] record;
+                    while ((record = reader.NextRecord()) != null)
+                    {
+                        var documentos = new t_docum
+                        {
+                            docum = record[]?.ToString()?.Trim(),   //codigo
+                            nombre = record[]?.ToString()?.Trim(),  //nombre
+                            tipo_doc = record[]?.ToString()?.Trim(),//asimilar
+                            contabil = Convert.ToInt32(record[]),//CD
+                            public int si_cnomb //CT
+                            public int bloqueado //IN
+                            public int vali_doc //VD
+                            public int si_consec //UV
+                            public int controlrut //CR
+                            public int camb_ter //PC
+                            public int desc_ord //DO
+                            public int es_trans //TR
+                            public int cons_proc //CA
+                            public int desc_doci //DD
+                            public int silibtes //LT
+                            public int n_lineas //NL, esta campo para nosotros es numerico, ellos lo tienen boleano
+                            public int n_recup //RD
+                            public int obser_doc //RO
+                            public int cont_fec //ControlFechas
+                            public int vend_det //Vendedor
+                            public int zon_det //Zona
+                            public int cco_det //CCosto
+                            public int es_resolu //Resolucion
+                            public int sniif_on //ActivarColumna
+                            public int si_contpag //ControlaPagos
+                            //Cuentas, no la veo en el business preguntar
+                            public DateTime fecha_cre //FechaCreacion
+                            //IdDocumentoContrapartida
+                            //Naturaleza
+                            //detalle, se saca de otra tabla llamda detalles
+                            public string Mensaje1 //Mensaje1
+                            ublic string Mensaje2 //Mensaje2
+                            public string Mensaje3 //Mensaje3
+                            ublic int afin_cxc //ValoresCartera
+                            public string Anexo1 //Anexo1
+                            public string Anexo2 //Anexo2
+                            public string Anexo3 //Anexo3
+                            public string Anexo4 //Anexo4
+                            public string Anexo5 //Anexo5
+                            public string Anexo6 //Anexo6
+                            public int afin_tipo //MovimientoCartera
+                            public string afin_doc//FusionarDocumento
+};
+                    }
+                }
+                break;
             case 7: // items
 
                 using (FileStream fc = File.OpenRead(dbfFileitems))
@@ -290,7 +344,7 @@ class Program
                             acu_tpos = Convert.ToInt32(record[48]),
                             subsidio = Convert.ToInt32(record[105]),
                             mod_qpos = Convert.ToInt32(record[84]),
-                            es_bol = record[132],
+                            es_bol = Convert.ToInt32(record[132]),
                             contabgrav = Convert.ToInt32(record[96]),
                             sitoledo = Convert.ToInt32(record[88]),
                             pref_ean = record[89]?.ToString()?.Trim(),
@@ -377,7 +431,7 @@ class Program
 
                         };
 
-                            items_list.Add(itemsPick);
+                        items_list.Add(itemsPick);
 
                     }
                 }
