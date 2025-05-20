@@ -240,11 +240,8 @@ class Program
                 break;
             case 6://documentos
 
-                using (FileStream fc = File.OpenRead(dbfFileDocum))
-                {
-                    var reader = new DBFReader(fc);
-                    reader.CharEncoding = System.Text.Encoding.UTF8;
 
+<<<<<<< HEAD
                     object[] record;
                     while ((record = reader.NextRecord()) != null)
                     {
@@ -297,6 +294,9 @@ class Program
                     }
                 }
                 break;
+=======
+                break;   
+>>>>>>> 69e64635f53b21e3b2eedc092f070901aff11df6
             case 7: // items
 
                 using (FileStream fc = File.OpenRead(dbfFileitems))
@@ -345,7 +345,7 @@ class Program
                             acu_tpos = Convert.ToInt32(record[48]),
                             subsidio = Convert.ToInt32(record[105]),
                             mod_qpos = Convert.ToInt32(record[84]),
-                            es_bol = Convert.ToInt32(record[132]),
+                            es_bol = record[132],
                             contabgrav = Convert.ToInt32(record[96]),
                             sitoledo = Convert.ToInt32(record[88]),
                             pref_ean = record[89]?.ToString()?.Trim(),
@@ -432,7 +432,7 @@ class Program
 
                         };
 
-                        items_list.Add(itemsPick);
+                            items_list.Add(itemsPick);
 
                     }
                 }
