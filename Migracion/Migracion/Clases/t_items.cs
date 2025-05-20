@@ -44,7 +44,7 @@ namespace Migracion.Clases
         public int acu_tpos { get; set; }
         public int subsidio { get; set; }
         public int mod_qpos { get; set; }
-        public int es_bol { get; set; }
+        public string es_bol { get; set; }
         public int contabgrav { get; set; }
         public int sitoledo { get; set; }
         public string pref_ean { get; set; }
@@ -127,6 +127,9 @@ namespace Migracion.Clases
         public string cod_ref { get; set; }
         public string refer { get; set; }
         public int pvtali { get; set; }
+
+        public int imp_salu { get; set; }
+        public int gen_impu { get; set; }
 
     }
 }
