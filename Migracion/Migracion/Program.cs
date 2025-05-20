@@ -36,7 +36,7 @@ class Program
 
         var items_list  = new List<t_items>();
 
-        var docum       = new List<t_docum>();
+        var docum_list = new List<t_docum>();
 
 
         //Instanciando la clase proceso
@@ -238,7 +238,7 @@ class Program
                 Procesos.InsertarHistonoveS(nove_sal);
 
                 break;
-            case 6:
+            case 6://documentos
 
                 using (FileStream fc = File.OpenRead(dbfFileDocum))
                 {
@@ -253,46 +253,47 @@ class Program
                             docum = record[]?.ToString()?.Trim(),   //codigo
                             nombre = record[]?.ToString()?.Trim(),  //nombre
                             tipo_doc = record[]?.ToString()?.Trim(),//asimilar
-                            contabil = Convert.ToInt32(record[]),//CD
-                            public int si_cnomb //CT
-                            public int bloqueado //IN
-                            public int vali_doc //VD
-                            public int si_consec //UV
-                            public int controlrut //CR
-                            public int camb_ter //PC
-                            public int desc_ord //DO
-                            public int es_trans //TR
-                            public int cons_proc //CA
-                            public int desc_doci //DD
-                            public int silibtes //LT
-                            public int n_lineas //NL, esta campo para nosotros es numerico, ellos lo tienen boleano
-                            public int n_recup //RD
-                            public int obser_doc //RO
-                            public int cont_fec //ControlFechas
-                            public int vend_det //Vendedor
-                            public int zon_det //Zona
-                            public int cco_det //CCosto
-                            public int es_resolu //Resolucion
-                            public int sniif_on //ActivarColumna
-                            public int si_contpag //ControlaPagos
+                            contabil = Convert.ToInt32(record[]),   //CD
+                            si_cnomb = Convert.ToInt32(record[]),   //CT
+                            bloqueado = Convert.ToInt32(record[]),  //IN
+                            vali_doc = Convert.ToInt32(record[]),   //VD
+                            si_consec = Convert.ToInt32(record[]),  //UV
+                            controlrut = Convert.ToInt32(record[]), //CR
+                            camb_ter = Convert.ToInt32(record[]),   //PC
+                            desc_ord = Convert.ToInt32(record[]),   //DO
+                            es_trans = Convert.ToInt32(record[]),   //TR
+                            cons_proc = Convert.ToInt32(record[]),  //CA
+                            desc_doci = Convert.ToInt32(record[]),  //DD
+                            silibtes = Convert.ToInt32(record[]),   //LT
+                            n_lineas = Convert.ToInt32(record[]),   //NL, esta campo para nosotros es numerico, ellos lo tienen boleano
+                            n_recup = Convert.ToInt32(record[]),    //RD
+                            obser_doc = Convert.ToInt32(record[]),  //RO
+                            cont_fec = Convert.ToInt32(record[]),   //ControlFechas
+                            vend_det = Convert.ToInt32(record[]),   //Vendedor
+                            zon_det = Convert.ToInt32(record[]),    //Zona
+                            cco_det = Convert.ToInt32(record[]),    //CCosto
+                            es_resolu = Convert.ToInt32(record[]),  //Resolucion
+                            sniif_on = Convert.ToInt32(record[]),   //ActivarColumna
+                            si_contpag = Convert.ToInt32(record[]), //ControlaPagos
                             //Cuentas, no la veo en el business preguntar
-                            public DateTime fecha_cre //FechaCreacion
+                            fecha_cre = Convert.ToDateTime(record[]),//FechaCreacion
                             //IdDocumentoContrapartida
                             //Naturaleza
                             //detalle, se saca de otra tabla llamda detalles
-                            public string Mensaje1 //Mensaje1
-                            ublic string Mensaje2 //Mensaje2
-                            public string Mensaje3 //Mensaje3
-                            ublic int afin_cxc //ValoresCartera
-                            public string Anexo1 //Anexo1
-                            public string Anexo2 //Anexo2
-                            public string Anexo3 //Anexo3
-                            public string Anexo4 //Anexo4
-                            public string Anexo5 //Anexo5
-                            public string Anexo6 //Anexo6
-                            public int afin_tipo //MovimientoCartera
-                            public string afin_doc//FusionarDocumento
-};
+                            Mensaje1 = record[]?.ToString()?.Trim(),//Mensaje1
+                            Mensaje2 = record[]?.ToString()?.Trim(),//Mensaje2
+                            Mensaje3 = record[]?.ToString()?.Trim(),//Mensaje3
+                            afin_cxc = Convert.ToInt32(record[]),   //ValoresCartera
+                            Anexo1 = record[]?.ToString()?.Trim(),  //Anexo1
+                            Anexo2 = record[]?.ToString()?.Trim(),  //Anexo2
+                            Anexo3 = record[]?.ToString()?.Trim(),  //Anexo3
+                            Anexo4 = record[]?.ToString()?.Trim(),  //Anexo4
+                            Anexo5 = record[]?.ToString()?.Trim(),  //Anexo5
+                            Anexo6 = record[]?.ToString()?.Trim(),  //Anexo6
+                            afin_tipo = Convert.ToInt32(record[]),  //MovimientoCartera
+                            afin_doc = record[]?.ToString()?.Trim(),//FusionarDocumento
+                        };
+                        docum_list.Add(documentos);
                     }
                 }
                 break;
